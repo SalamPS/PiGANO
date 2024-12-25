@@ -26,9 +26,9 @@ flutter:
   fonts:
     - family: Tektur
       fonts:
-        - asset: packages/uas_pab_main/fonts/Tektur.ttf
+        - asset: packages/egano/fonts/Tektur.ttf
           weight: 400
     - family: Oxanium
       fonts:
-        - asset: packages/uas_pab_main/fonts/Oxanium.ttf
+        - asset: packages/egano/fonts/Oxanium.ttf
           weight: 700
