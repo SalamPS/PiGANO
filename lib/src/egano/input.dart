@@ -43,6 +43,14 @@ class EganoInputState extends State<EganoInput> {
       }
     });
   }
+  
+  @override
+  void dispose() {
+    // Bersihkan semua controller
+    privateKeyCtr.dispose();
+    privateMessageCtr.dispose();
+    super.dispose();
+  }
 
   Future<void> _requestPermissions() async {
     PermissionStatus photoPermission = await Permission.photos.status;
@@ -69,15 +77,26 @@ class EganoInputState extends State<EganoInput> {
   }
 
   void eganoCrypt (method) {
+    // Menyimpan data yang diperlukan sebelum membersihkan
+    final imageToPass = image;
+    final privateKeyToPass = privateKeyCtr.text;
+    final privateMessageToPass = privateMessageCtr.text;
+
+    // Membersihkan controller dan image
+    privateKeyCtr.clear();
+    privateMessageCtr.clear();
+    image = null;
+
+    // Navigasi ke halaman berikutnya
     Navigator.of(context).pop();
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => EganoResult(
-        image: image!,
-        privateKey: int.parse(privateKeyCtr.text),
-        privateMessage: privateMessageCtr.text,
-        method: method,
+          image: imageToPass!,
+          privateKey: int.parse(privateKeyToPass),
+          privateMessage: privateMessageToPass,
+          method: method,
         ),
       ),
     );
