@@ -20,7 +20,8 @@ class EganoInput extends StatefulWidget {
 
 class EganoInputState extends State<EganoInput> {
   late List<Particle> particles;
-  String privateKey = '';
+  TextEditingController privateKeyCtr = TextEditingController();
+  TextEditingController privateMessageCtr = TextEditingController();
   File? image;
 
   @override
@@ -67,15 +68,15 @@ class EganoInputState extends State<EganoInput> {
     setState(() => this.image = imageTemp);
   }
 
-  void eganoCrypt (method, privateMessage) {
+  void eganoCrypt (method) {
     Navigator.of(context).pop();
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => EganoResult(
         image: image!,
-        privateMessage: privateMessage,
-        privateKey: int.parse(privateKey),
+        privateKey: int.parse(privateKeyCtr.text),
+        privateMessage: privateMessageCtr.text,
         method: method,
         ),
       ),
@@ -87,27 +88,29 @@ class EganoInputState extends State<EganoInput> {
       NotificationUtils.showErrorNotification(context, 'Please provide any image first !');
       return;
     }
+
     if (!(
-        privateKey.isNotEmpty && 
-        int.tryParse(privateKey) != null && 
-        int.parse(privateKey) > 0 &&
-        int.parse(privateKey) < 10000000
+        privateKeyCtr.text.isNotEmpty && 
+        int.tryParse(privateKeyCtr.text) != null && 
+        int.parse(privateKeyCtr.text) > 0 &&
+        int.parse(privateKeyCtr.text) < 10000000
       )) {
       NotificationUtils.showErrorNotification(context, 'Please enter valid required number !');
       return;
     }
-    if (method == "Encrypt") {
+
+    if (method == "Decrypt") {
+      eganoCrypt(method);
+    }
+    else if (method == "Encrypt") {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          String privateMessage = '';
           return AlertDialog(
             backgroundColor: const Color.fromARGB(255, 39, 48, 71),
             title: const Text('Private Message', style: TextStyle(color: Colors.white70, fontSize: 18)),
             content: TextField(
-              onChanged: (value) {
-                privateMessage = value;
-              },
+              controller: privateMessageCtr,
               decoration: const InputDecoration(
                 filled: true,
                 fillColor: Color(0xFF1D2437),
@@ -131,8 +134,8 @@ class EganoInputState extends State<EganoInput> {
               TextButton(
                 child: const Text('Encrypt', style: TextStyle(color: Colors.white70)),
                 onPressed: () {
-                  if (privateMessage.isNotEmpty) {
-                    eganoCrypt(method, privateMessage);
+                  if (privateMessageCtr.text.isNotEmpty) {
+                    eganoCrypt(method);
                   }
                   else {
                     NotificationUtils.showErrorNotification(context, 'Please enter at least 1 character !');
@@ -144,9 +147,6 @@ class EganoInputState extends State<EganoInput> {
         },
       );
     }
-    else {
-      eganoCrypt(method, "");
-    }
   }
   
   Widget eganoOption (String method, IconData icon) {
@@ -156,18 +156,18 @@ class EganoInputState extends State<EganoInput> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
         ),
-        color: image == null || privateKey.isEmpty ? const Color.fromARGB(118, 15, 98, 81) : const Color(0xFF0f6252),
+        color: image == null || privateKeyCtr.text.isEmpty ? const Color.fromARGB(118, 15, 98, 81) : const Color(0xFF0f6252),
         onPressed: () {
           eganoStart(method);
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: image == null || privateKey.isEmpty ? Colors.white38 : Colors.white70),
+            Icon(icon, color: image == null || privateKeyCtr.text.isEmpty ? Colors.white38 : Colors.white70),
             const SizedBox(width: 8),
             Text(
               method,
-              style: TextStyle(color: image == null || privateKey.isEmpty ? Colors.white38 : Colors.white70, fontWeight: FontWeight.bold)
+              style: TextStyle(color: image == null || privateKeyCtr.text.isEmpty ? Colors.white38 : Colors.white70, fontWeight: FontWeight.bold)
             ),
           ],
         ),
@@ -330,9 +330,7 @@ class EganoInputState extends State<EganoInput> {
                   children: [
                     TextFormField(
                       keyboardType: TextInputType.number,
-                      onChanged: (value) { 
-                        setState(() => privateKey = value); 
-                      },
+                      controller: privateKeyCtr,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.white10,
