@@ -69,7 +69,7 @@ class _EganoWelcomeState extends State<EganoWelcome> {
                       child: Column(
                         children: [
                           Text(
-                            'Aplikasi Enkripsi dan Dekripsi Gambar dengan metode Caesar dan Steganografi LSB',
+                            'Instant Image Encryptor and Decryptor\nusing Caesar and LSB method',
                             style: TextStyle(color: Colors.white, fontSize: 14),
                             textAlign: TextAlign.center,
                           ),
