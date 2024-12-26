@@ -45,12 +45,17 @@ class EganoInputState extends State<EganoInput> {
 
   Future<void> _requestPermissions() async {
     PermissionStatus photoPermission = await Permission.photos.status;
-    if (photoPermission.isGranted) {
+    PermissionStatus storagePermission = await Permission.storage.status;
+    if (photoPermission.isGranted || storagePermission.isGranted) {
       // Izin diberikan
     } else {
       photoPermission = await Permission.photos.request();
-      PermissionStatus last = await Permission.photos.status;
-      if (last.isGranted) {
+      storagePermission = await Permission.storage.request();
+
+      PermissionStatus lastPhotos = await Permission.photos.status;
+      PermissionStatus lastStorage = await Permission.storage.status;
+
+      if (lastPhotos.isGranted || lastStorage.isGranted) {
         // Izin diberikan
       } else {
         // Izin ditolak
