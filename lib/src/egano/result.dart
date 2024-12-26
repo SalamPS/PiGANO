@@ -54,29 +54,22 @@ class EganoResultState extends State<EganoResult> {
     });
   }
 
-  Future<void> _saveImage() async {
-    try {
-      final timestamp = DateFormat('HH-mm-dd-MM-yyyy').format(DateTime.now());
-      if (!await directory.exists()) {
-        await directory.create(recursive: true);
-      }
-      final extension = _encodedImage!.path.split('.').last;
-      final path = '${directory.path}/encrypted-$timestamp.$extension';
-      final file = File(path);
-      await file.writeAsBytes(await _encodedImage!.readAsBytes());
-      NotificationUtils.showSuccessNotification(context, 'Image saved to $path');
-    } catch (e) {
-      NotificationUtils.showErrorNotification(context, 'Failed to save image: $e');
+  Future<File> _generateFile () async {
+    if (!await directory.exists()) {
+      await directory.create(recursive: true);
     }
+    final timestamp = DateFormat('yyyy-MM-dd-HH-mm').format(DateTime.now());
+    final extension = widget.image.path.split('.').last;
+    final path = '${directory.path}/encrypted-$timestamp.$extension';
+    return File(path);
   }
 
   void _startFetching() async {
-    final timestamp = DateFormat('HH-mm-dd-MM-yyyy').format(DateTime.now());
     String result = '';
     if (widget.method == 'Encrypt') {
-      result = await _encodeImage(timestamp);
+      result = await _encodeImage();
     } else {
-      result = await _decodeImage(timestamp);
+      result = await _decodeImage();
     }
     
     if (mounted) {
@@ -92,7 +85,7 @@ class EganoResultState extends State<EganoResult> {
     });
   }
 
-  Future<dynamic> _encodeImage(timestamp) async {
+  Future<dynamic> _encodeImage() async {
     try {
       final url = Uri.parse('https://py.salamp.id/encode');
       final request = http.MultipartRequest('POST', url)
@@ -101,12 +94,10 @@ class EganoResultState extends State<EganoResult> {
         ..fields['key'] = widget.privateKey.toString();
 
       final response = await request.send();
-      final extension = widget.image.path.split('.').last;
       
       if (response.statusCode == 200 && mounted) {
         final responseData = await http.Response.fromStream(response);
-        final filePath = '${directory.path}/encoded-image-$timestamp.$extension';
-        final file = File(filePath);
+        final file = await _generateFile();
         await file.writeAsBytes(responseData.bodyBytes);
 
         setState(() {
@@ -122,7 +113,7 @@ class EganoResultState extends State<EganoResult> {
     }
   }
 
-  Future<dynamic> _decodeImage (timestamp) async {
+  Future<dynamic> _decodeImage () async {
     try {
       final url = Uri.parse('https://py.salamp.id/decode');
       final request = http.MultipartRequest('POST', url)
@@ -267,7 +258,13 @@ class EganoResultState extends State<EganoResult> {
                       onPressed: () async {
                         if (!_isLoading && _isSuccess) {
                           if (widget.method == "Encrypt") {
-                            _saveImage();
+                            try {
+                              final file = await _generateFile();
+                              await file.writeAsBytes(await _encodedImage!.readAsBytes());
+                              NotificationUtils.showSuccessNotification(context, 'Image saved to ${file.path}');
+                            } catch (e) {
+                              NotificationUtils.showErrorNotification(context, 'Failed to save image: $e');
+                            }
                           } else {
                             Clipboard.setData(ClipboardData(text: _decodedMessage!));
                           }
