@@ -29,7 +29,7 @@ class NotificationUtils {
     }
   }
 
-  void showErrorNotification(BuildContext context, String message) {
+  static void showErrorNotification(BuildContext context, String message) {
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
