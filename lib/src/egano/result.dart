@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:egano/src/utils/notification_utils.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
@@ -63,21 +64,9 @@ class EganoResultState extends State<EganoResult> {
       final path = '${directory.path}/encrypted-$timestamp.$extension';
       final file = File(path);
       await file.writeAsBytes(await _encodedImage!.readAsBytes());
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Image saved to $path', style: const TextStyle(color: Colors.black87)),
-          backgroundColor: const Color.fromARGB(255, 230, 250, 252),
-          duration: const Duration(seconds: 2),
-        ),
-      );
+      NotificationUtils.showSuccessNotification(context, 'Image saved to $path');
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to save image: $e', style: const TextStyle(color: Colors.black87)),
-          backgroundColor: const Color.fromARGB(255, 230, 250, 252),
-          duration: const Duration(seconds: 2),
-        ),
-      );
+      NotificationUtils.showErrorNotification(context, 'Failed to save image: $e');
     }
   }
 
@@ -92,21 +81,9 @@ class EganoResultState extends State<EganoResult> {
     
     if (mounted) {
       if (result.contains("encrypted") || result.contains("decrypted")) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(result, style: const TextStyle(color: Colors.black87)),
-            backgroundColor: const Color.fromARGB(255, 230, 250, 252),
-            duration: const Duration(seconds: 5),
-          ),
-        );
+        NotificationUtils.showSuccessNotification(context, result);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(result, style: const TextStyle(color: Colors.black87)),
-            backgroundColor: const Color.fromARGB(255, 248, 181, 198),
-            duration: const Duration(seconds: 5),
-          ),
-        );
+        NotificationUtils.showErrorNotification(context, result);
       }
     }
 

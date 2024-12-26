@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:egano/src/utils/notification_utils.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:egano/src/background/particle.dart';
 import 'package:egano/src/background/particles_animation.dart';
@@ -55,16 +56,9 @@ class EganoInputState extends State<EganoInput> {
       PermissionStatus lastPhotos = await Permission.photos.status;
       PermissionStatus lastStorage = await Permission.storage.status;
 
-      if (lastPhotos.isGranted || lastStorage.isGranted) {
-        // Izin diberikan
-      } else {
+      if (!lastPhotos.isGranted && !lastStorage.isGranted) {
         // Izin ditolak
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Storage permission is required to save images.'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        NotificationUtils.showErrorNotification(context, 'Storage permission is required to save images.');
       }
     }
   }
@@ -92,29 +86,17 @@ class EganoInputState extends State<EganoInput> {
   }
 
   void eganoStart (method) {
+    if (image == null) {
+      NotificationUtils.showErrorNotification(context, 'Please provide any image first !');
+      return;
+    }
     if (!(
         privateKey.isNotEmpty && 
         int.tryParse(privateKey) != null && 
         int.parse(privateKey) > 0 &&
         int.parse(privateKey) < 10000000
       )) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter valid required number !', style: TextStyle(color: Colors.black87)),
-          backgroundColor: Color.fromARGB(255, 248, 181, 198),
-          duration: Duration(seconds: 2),
-        ),
-      );
-      return;
-    }
-    if (image == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please provide any image first !', style: TextStyle(color: Colors.black87)),
-          backgroundColor: Color.fromARGB(255, 248, 181, 198),
-          duration: Duration(seconds: 2),
-        ),
-      );
+      NotificationUtils.showErrorNotification(context, 'Please enter valid required number !');
       return;
     }
     if (method == "Encrypt") {
@@ -156,13 +138,7 @@ class EganoInputState extends State<EganoInput> {
                     eganoCrypt(method, privateMessage);
                   }
                   else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Please enter at least 1 character !', style: TextStyle(color: Colors.black87)),
-                        backgroundColor: Color.fromARGB(255, 248, 181, 198),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
+                    NotificationUtils.showErrorNotification(context, 'Please enter at least 1 character !');
                   }
                 },
               ),
