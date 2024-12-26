@@ -20,9 +20,8 @@ class EganoInput extends StatefulWidget {
 
 class EganoInputState extends State<EganoInput> {
   late List<Particle> particles;
-  final formKey = GlobalKey<FormState>();
-  File? image;
   String privateKey = '';
+  File? image;
 
   @override
   void initState() {
@@ -47,18 +46,16 @@ class EganoInputState extends State<EganoInput> {
   Future<void> _requestPermissions() async {
     PermissionStatus photoPermission = await Permission.photos.status;
     PermissionStatus storagePermission = await Permission.storage.status;
-    if (photoPermission.isGranted || storagePermission.isGranted) {
-      // Izin diberikan
-    } else {
+
+    if (!photoPermission.isGranted && !storagePermission.isGranted) {
       photoPermission = await Permission.photos.request();
-      storagePermission = await Permission.storage.request();
 
-      PermissionStatus lastPhotos = await Permission.photos.status;
-      PermissionStatus lastStorage = await Permission.storage.status;
+      if (!photoPermission.isGranted) {
+        storagePermission = await Permission.storage.request();
 
-      if (!lastPhotos.isGranted && !lastStorage.isGranted) {
-        // Izin ditolak
-        NotificationUtils.showErrorNotification(context, 'Storage permission is required to save images.');
+        if (!storagePermission.isGranted) {
+          NotificationUtils.showErrorNotification(context, 'Storage permission is required to save images.');
+        }
       }
     }
   }
@@ -327,53 +324,9 @@ class EganoInputState extends State<EganoInput> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Expanded(
-                          child: MaterialButton(
-                            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                            ),
-                            color: image == null || privateKey.isEmpty ? const Color.fromARGB(118, 15, 98, 81) : const Color(0xFF0f6252),
-                            onPressed: () {
-                              eganoStart("Encrypt");
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.vpn_key, color: image == null || privateKey.isEmpty ? Colors.white38 : Colors.white70),
-                                const SizedBox(width: 8),
-                                Text(
-                                  "Encrypt",
-                                  style: TextStyle(color: image == null || privateKey.isEmpty ? Colors.white38 : Colors.white70, fontWeight: FontWeight.bold)
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                        eganoOption("Encrypt", Icons.vpn_key),
                         const SizedBox(width: 10),
-                        Expanded(
-                          child: MaterialButton(
-                            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                            ),
-                            color: image == null || privateKey.isEmpty ? const Color.fromARGB(118, 15, 98, 81) : const Color(0xFF0f6252),
-                            onPressed: () {
-                              eganoStart("Decrypt");
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.key_off_rounded, color: image == null || privateKey.isEmpty ? Colors.white38 : Colors.white70),
-                                const SizedBox(width: 8),
-                                Text(
-                                  "Decrypt",
-                                  style: TextStyle(color: image == null || privateKey.isEmpty ? Colors.white38 : Colors.white70, fontWeight: FontWeight.bold)
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                        eganoOption("Decrypt", Icons.key_off_rounded)
                       ],
                     ),
                   ],
@@ -383,6 +336,32 @@ class EganoInputState extends State<EganoInput> {
           ],
         ),
       )
+    );
+  }
+  
+  Widget eganoOption (String method, IconData icon) {
+    return Expanded(
+      child: MaterialButton(
+        padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        color: image == null || privateKey.isEmpty ? const Color.fromARGB(118, 15, 98, 81) : const Color(0xFF0f6252),
+        onPressed: () {
+          eganoStart(method);
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: image == null || privateKey.isEmpty ? Colors.white38 : Colors.white70),
+            const SizedBox(width: 8),
+            Text(
+              method,
+              style: TextStyle(color: image == null || privateKey.isEmpty ? Colors.white38 : Colors.white70, fontWeight: FontWeight.bold)
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
