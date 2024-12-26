@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:egano/src/background/particle.dart';
 import 'package:egano/src/background/particles_animation.dart';
 import 'package:egano/src/egano/input.dart';
-import 'package:http/http.dart' as http;
 
 class EganoWelcome extends StatefulWidget {
   const EganoWelcome({super.key});
@@ -24,7 +23,6 @@ class _EganoWelcomeState extends State<EganoWelcome> {
       particles.add(Particle(width: 600, height: 701));
     }
     update();
-    fetchPing();
   }
   update() {
     Timer.periodic(const Duration(milliseconds: 16), (timer) {
@@ -34,20 +32,6 @@ class _EganoWelcomeState extends State<EganoWelcome> {
         timer.cancel();
       }
     });
-  }
-
-  Future<void> fetchPing() async {
-    final response = await http.get(Uri.parse('https://py.salamp.id/ping'));
-
-    if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Terkoneksi ke server')),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Tidak terhubung ke server')),
-      );
-    }
   }
 
   @override
