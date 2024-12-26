@@ -4,12 +4,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:egano/src/background/particle.dart';
 import 'package:egano/src/background/particles_animation.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 
 class EganoResult extends StatefulWidget {
@@ -92,12 +92,12 @@ class EganoResultState extends State<EganoResult> {
     }
     
     if (mounted) {
-      if (result == "encrypted" || result == "decrypted") {
+      if (result.contains("encrypted") || result.contains("decrypted")) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('File uploaded and $result successfully.', style: const TextStyle(color: Colors.black87)),
+            content: Text(result, style: const TextStyle(color: Colors.black87)),
             backgroundColor: const Color.fromARGB(255, 230, 250, 252),
-            duration: const Duration(seconds: 2),
+            duration: const Duration(seconds: 5),
           ),
         );
       } else {
@@ -125,11 +125,11 @@ class EganoResultState extends State<EganoResult> {
         ..fields['key'] = widget.privateKey.toString();
 
       final response = await request.send();
-
+      final extension = widget.image.path.split('.').last;
+      
       if (response.statusCode == 200 && mounted) {
         final responseData = await http.Response.fromStream(response);
-        final directory = await getApplicationDocumentsDirectory();
-        final filePath = '${directory.path}/encoded-image-$timestamp.png';
+        final filePath = '${directory.path}/encoded-image-$timestamp.$extension';
         final file = File(filePath);
         await file.writeAsBytes(responseData.bodyBytes);
 
@@ -137,7 +137,7 @@ class EganoResultState extends State<EganoResult> {
           _encodedImage = file;
         });
         _isSuccess = true;
-        return "encrypted";
+        return "Your message has been encrypted successfully and saved to your gallery.";
       } else {
         return "Failed because we could not connect to our encryptor server !";
       }
@@ -163,7 +163,7 @@ class EganoResultState extends State<EganoResult> {
               _decodedMessage = decodedText;
           });
           _isSuccess = true;
-          return "decrypted";
+          return "Your picture has been decrypted successfully and copied to your clipboard.";
         } else {
            return "Failed to decrypt image. Please provide a picture that match your private key !";
         }
@@ -291,9 +291,9 @@ class EganoResultState extends State<EganoResult> {
                       onPressed: () async {
                         if (!_isLoading && _isSuccess) {
                           if (widget.method == "Encrypt") {
-                            await _saveImage();
+                            _saveImage();
                           } else {
-                            Clipboard.setData(const ClipboardData(text: "Decrypted text"));
+                            Clipboard.setData(ClipboardData(text: _decodedMessage!));
                           }
                         }
                       },
