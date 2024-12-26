@@ -23,7 +23,7 @@ class NotificationUtils {
             borderRadius: BorderRadius.circular(10),
           ),
           margin: const EdgeInsets.all(8),
-          duration: const Duration(seconds: 2),
+          duration: const Duration(seconds: 3),
         ),
       );
     }
