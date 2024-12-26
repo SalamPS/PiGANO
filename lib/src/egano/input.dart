@@ -148,6 +148,32 @@ class EganoInputState extends State<EganoInput> {
       eganoCrypt(method, "");
     }
   }
+  
+  Widget eganoOption (String method, IconData icon) {
+    return Expanded(
+      child: MaterialButton(
+        padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        color: image == null || privateKey.isEmpty ? const Color.fromARGB(118, 15, 98, 81) : const Color(0xFF0f6252),
+        onPressed: () {
+          eganoStart(method);
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: image == null || privateKey.isEmpty ? Colors.white38 : Colors.white70),
+            const SizedBox(width: 8),
+            Text(
+              method,
+              style: TextStyle(color: image == null || privateKey.isEmpty ? Colors.white38 : Colors.white70, fontWeight: FontWeight.bold)
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -336,32 +362,6 @@ class EganoInputState extends State<EganoInput> {
           ],
         ),
       )
-    );
-  }
-  
-  Widget eganoOption (String method, IconData icon) {
-    return Expanded(
-      child: MaterialButton(
-        padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30.0),
-        ),
-        color: image == null || privateKey.isEmpty ? const Color.fromARGB(118, 15, 98, 81) : const Color(0xFF0f6252),
-        onPressed: () {
-          eganoStart(method);
-        },
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: image == null || privateKey.isEmpty ? Colors.white38 : Colors.white70),
-            const SizedBox(width: 8),
-            Text(
-              method,
-              style: TextStyle(color: image == null || privateKey.isEmpty ? Colors.white38 : Colors.white70, fontWeight: FontWeight.bold)
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
