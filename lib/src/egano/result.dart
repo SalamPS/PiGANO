@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:egano/src/index.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -28,6 +29,7 @@ class EganoResultState extends State<EganoResult> {
   late List<Particle> particles;
   final directory = Directory('/storage/emulated/0/Pictures/Egano');
   bool _isLoading = true;
+  bool _isSuccess = false;
 
   File? _encodedImage;
   String? _decodedMessage;
@@ -90,22 +92,24 @@ class EganoResultState extends State<EganoResult> {
       result = await _decodeImage(timestamp);
     }
     
-    if (result == "ecrypted" || result == "decrypted") {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('File uploaded and $result successfully.', style: const TextStyle(color: Colors.black87)),
-          backgroundColor: const Color.fromARGB(255, 230, 250, 252),
-          duration: const Duration(seconds: 2),
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(result, style: const TextStyle(color: Colors.black87)),
-          backgroundColor: const Color.fromARGB(255, 230, 250, 252),
-          duration: const Duration(seconds: 2),
-        ),
-      );
+    if (mounted) {
+      if (result == "encrypted" || result == "decrypted") {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('File uploaded and $result successfully.', style: const TextStyle(color: Colors.black87)),
+            backgroundColor: const Color.fromARGB(255, 230, 250, 252),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result, style: const TextStyle(color: Colors.black87)),
+            backgroundColor: const Color.fromARGB(255, 248, 181, 198),
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      }
     }
 
     setState(() {
@@ -114,46 +118,61 @@ class EganoResultState extends State<EganoResult> {
   }
 
   Future<dynamic> _encodeImage(timestamp) async {
-    final url = Uri.parse('https://py.salamp.id/encode');
-    final request = http.MultipartRequest('POST', url)
-      ..files.add(await http.MultipartFile.fromPath('file', widget.image.path))
-      ..fields['message'] = widget.privateMessage
-      ..fields['key'] = widget.privateKey.toString();
+    try {
+      final url = Uri.parse('https://py.salamp.id/encode');
+      final request = http.MultipartRequest('POST', url)
+        ..files.add(await http.MultipartFile.fromPath('file', widget.image.path))
+        ..fields['message'] = widget.privateMessage
+        ..fields['key'] = widget.privateKey.toString();
 
-    final response = await request.send();
+      final response = await request.send();
 
-    if (response.statusCode == 200 && mounted) {
-      final responseData = await http.Response.fromStream(response);
-      final directory = await getApplicationDocumentsDirectory();
-      final filePath = '${directory.path}/encoded-image-$timestamp.png';
-      final file = File(filePath);
-      await file.writeAsBytes(responseData.bodyBytes);
+      if (response.statusCode == 200 && mounted) {
+        final responseData = await http.Response.fromStream(response);
+        final directory = await getApplicationDocumentsDirectory();
+        final filePath = '${directory.path}/encoded-image-$timestamp.png';
+        final file = File(filePath);
+        await file.writeAsBytes(responseData.bodyBytes);
 
-      setState(() {
-        _encodedImage = file;
-      });
-      return "encrypted";
-    } else {
-      return "Failed to encrypt image.";
+        setState(() {
+          _encodedImage = file;
+        });
+        _isSuccess = true;
+        return "encrypted";
+      } else {
+        return "Failed because we could not connect to our encryptor server !";
+      }
+    } catch (e) {
+      return "Failed to connect to the server. Please check your connection !";
     }
   }
 
   Future<dynamic> _decodeImage (timestamp) async {
-    final url = Uri.parse('https://py.salamp.id/decode');
-    final request = http.MultipartRequest('POST', url)
-      ..files.add(await http.MultipartFile.fromPath('file', widget.image.path))
-      ..fields['key'] = widget.privateKey.toString();
+    try {
+      final url = Uri.parse('https://py.salamp.id/decode');
+      final request = http.MultipartRequest('POST', url)
+        ..files.add(await http.MultipartFile.fromPath('file', widget.image.path))
+        ..fields['key'] = widget.privateKey.toString();
 
-    final response = await request.send();
+      final response = await request.send();
 
-    if (response.statusCode == 200 && mounted) {
-      final responseData = await http.Response.fromStream(response);
-      setState(() {
-        _decodedMessage = jsonDecode(responseData.body)['plain_text'];
-      });
-      return "decrypted";
-    } else {
-      return "Failed to decrypt image.";
+      if (response.statusCode == 200 && mounted) {
+        final responseData = await http.Response.fromStream(response);
+        final decodedText = jsonDecode(responseData.body)['plain_text'];
+        if (RegExp(r'^[a-zA-Z\s,\.]+$').hasMatch(decodedText)) {
+          setState(() {
+              _decodedMessage = decodedText;
+          });
+          _isSuccess = true;
+          return "decrypted";
+        } else {
+           return "Failed to decrypt image. Please provide a picture that match your private key !";
+        }
+      } else {
+         return "Failed because we could not connect to our decryptor server !";
+      }
+    } catch (e) {
+       return "Failed to connect to the server. Please check your connection !";
     }
   }
 
@@ -177,6 +196,12 @@ class EganoResultState extends State<EganoResult> {
               ),
             ],
           ),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
       ),
       body: CustomPaint(
@@ -226,7 +251,7 @@ class EganoResultState extends State<EganoResult> {
                               children: [
                                 const SizedBox(width: 5),
                                 Expanded(child: 
-                                  _isLoading 
+                                  _isLoading || !_isSuccess
                                   ? const Text('', style: TextStyle(color: Colors.white70))
                                   : Text.rich(
                                     TextSpan(
@@ -254,39 +279,63 @@ class EganoResultState extends State<EganoResult> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30.0),
-              child: Column(
+              padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
+              child: Row(
                 children: [
+                  Expanded(
+                    child: MaterialButton(
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 12.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      color: !_isLoading && _isSuccess ? const Color(0xFF0f6252) : const Color.fromARGB(118, 15, 98, 81),
+                      onPressed: () async {
+                        if (!_isLoading && _isSuccess) {
+                          if (widget.method == "Encrypt") {
+                            await _saveImage();
+                          } else {
+                            Clipboard.setData(const ClipboardData(text: "Decrypted text"));
+                          }
+                        }
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            widget.method == "Encrypt" ? Icons.save_rounded : Icons.copy_all_rounded,
+                            color: !_isLoading && _isSuccess ? Colors.white70 : Colors.white38),
+                          const SizedBox(width: 8),
+                          Text(
+                            widget.method == "Encrypt" ? "Save Encrypted Image" : "Copy Decrypted Text",
+                            style: TextStyle(color: !_isLoading && _isSuccess ? Colors.white70 : Colors.white38, fontWeight: FontWeight.bold)
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
                   MaterialButton(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 12.0),
+                    minWidth: 52,
+                    padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 12.0),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
-                    color: _isLoading ? const Color.fromARGB(118, 15, 98, 81) : const Color(0xFF0f6252),
+                    color: !_isLoading ? const Color(0xFF0f6252) : const Color.fromARGB(118, 15, 98, 81) ,
                     onPressed: () async {
                       if (!_isLoading) {
-                        if (widget.method == "Encrypt") {
-                          await _saveImage();
-                        } else {
-                          Clipboard.setData(const ClipboardData(text: "Decrypted text"));
-                        }
+                        Navigator.pop(context);
                       }
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          widget.method == "Encrypt" ? Icons.download : Icons.copy_all_rounded,
-                          color: _isLoading ? Colors.white38 : Colors.white70),
-                        const SizedBox(width: 8),
-                        Text(
-                          widget.method == "Encrypt" ? "Download Encrypted Image" : "Copy Decrypted Text",
-                          style: TextStyle(color: _isLoading ? Colors.white38 : Colors.white70, fontWeight: FontWeight.bold)
-                        ),
+                          Icons.home_rounded,
+                          color: !_isLoading ? Colors.white70 : Colors.white38),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20),
                 ],
               )
             )

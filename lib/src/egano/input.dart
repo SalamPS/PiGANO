@@ -194,15 +194,6 @@ class EganoInputState extends State<EganoInput> {
             ),
           ),
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const EganoInput()),
-            );
-          },
-        ),
       ),
       body: CustomPaint(
         painter: ParticlesPainter(particles: particles, opacity: 50),
@@ -341,7 +332,7 @@ class EganoInputState extends State<EganoInput> {
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.white10,
-                        hintText: 'Enter 1-8 digits of number',
+                        hintText: 'Enter 1-8 digits of privacy key',
                         hintStyle: const TextStyle(color: Colors.white54),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0),
