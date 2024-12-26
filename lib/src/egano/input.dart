@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 import 'dart:io';
 
@@ -12,10 +14,10 @@ class EganoInput extends StatefulWidget {
   const EganoInput({super.key});
 
   @override
-  _EganoInputState createState() => _EganoInputState();
+  EganoInputState createState() => EganoInputState();
 }
 
-class _EganoInputState extends State<EganoInput> {
+class EganoInputState extends State<EganoInput> {
   late List<Particle> particles;
   final formKey = GlobalKey<FormState>();
   File? image;

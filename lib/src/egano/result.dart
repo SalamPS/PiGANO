@@ -21,10 +21,10 @@ class EganoResult extends StatefulWidget {
   const EganoResult({super.key, required this.image, required this.method, required this.privateKey, required this.privateMessage});
 
   @override
-  _EganoResultState createState() => _EganoResultState();
+  EganoResultState createState() => EganoResultState();
 }
 
-class _EganoResultState extends State<EganoResult> {
+class EganoResultState extends State<EganoResult> {
   late List<Particle> particles;
   final directory = Directory('/storage/emulated/0/Pictures/Egano');
   bool _isLoading = true;
@@ -122,7 +122,7 @@ class _EganoResultState extends State<EganoResult> {
 
     final response = await request.send();
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 && mounted) {
       final responseData = await http.Response.fromStream(response);
       final directory = await getApplicationDocumentsDirectory();
       final filePath = '${directory.path}/encoded-image-$timestamp.png';
