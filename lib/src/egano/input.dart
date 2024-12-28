@@ -277,7 +277,6 @@ class EganoInputState extends State<EganoInput> {
                               )
                             ) : const SizedBox(height: 4),
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 Expanded(
                                   child: MaterialButton(

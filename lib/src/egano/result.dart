@@ -68,11 +68,11 @@ class EganoResultState extends State<EganoResult> {
     String result = '';
     if (widget.method == 'Encrypt') {
       result = await _encodeImage();
-    } else {
+    } else if (widget.method == "Decrypt") {
       result = await _decodeImage();
     }
     
-    if (mounted) {
+    if (mounted && result.isNotEmpty) {
       if (result.contains("encrypted") || result.contains("decrypted")) {
         NotificationUtils.showSuccessNotification(context, result);
       } else {
@@ -125,6 +125,7 @@ class EganoResultState extends State<EganoResult> {
       if (response.statusCode == 200 && mounted) {
         final responseData = await http.Response.fromStream(response);
         final decodedText = jsonDecode(responseData.body)['plain_text'];
+        // Cek apakah sesuai dengan format yang kita inginkan
         if (RegExp(r'^[a-zA-Z\s,\.]+$').hasMatch(decodedText)) {
           setState(() {
               _decodedMessage = decodedText;
