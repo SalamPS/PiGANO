@@ -155,7 +155,7 @@ class EganoResultState extends State<EganoResult> {
             style: const TextStyle(color: Colors.white),
             children: [
               const TextSpan(
-                text: 'EGANO',
+                text: 'PiGANO',
                 style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
               TextSpan(

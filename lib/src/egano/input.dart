@@ -207,7 +207,7 @@ class EganoInputState extends State<EganoInput> {
             style: TextStyle(color: Colors.white),
               children: [
                 TextSpan(
-                  text: 'EGANO',
+                  text: 'PiGANO',
                   style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                 ),
                 TextSpan(
