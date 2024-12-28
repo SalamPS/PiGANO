@@ -12,7 +12,7 @@ class Egano extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'EGANO | Kejarkom K1',
+      title: 'PiGANO | Kejarkom K1',
       theme: ThemeData(
         fontFamily: 'Tektur',
         primarySwatch: Colors.green,

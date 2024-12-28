@@ -4,7 +4,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
     <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:label="EGANO"
+        android:label="PiGANO"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

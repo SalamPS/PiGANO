@@ -54,7 +54,7 @@ class _EganoWelcomeState extends State<EganoWelcome> {
                         style: TextStyle(fontSize: 28),
                         children: [
                           TextSpan(
-                            text: 'EGANO',
+                            text: 'PiGANO',
                             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                           ),
                           TextSpan(
