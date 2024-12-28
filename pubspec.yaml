@@ -1,7 +1,7 @@
 name: egano
 description: "An application that merges cryptography and steganography into a piece by using Caesar Cipher and LSB method."
 publish_to: 'none'
-version: 0.1.0
+version: 1.0.0
 
 environment:
   sdk: ^3.5.4

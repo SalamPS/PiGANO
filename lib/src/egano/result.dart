@@ -139,7 +139,7 @@ class EganoResultState extends State<EganoResult> {
          return "Failed because we could not connect to our decryptor server !";
       }
     } catch (e) {
-       return "Failed to connect to the server. Please check your connection !";
+       return "Failed to decrypt image. Try again !";
     }
   }
 
