@@ -24,6 +24,10 @@ PiGANO is an application for encrypting and decrypting secret messages using Cae
 - **Encryption**: Upload a photo, provide a private key and private message.
 - **Decryption**: Upload a photo and provide the private key to decrypt the message.
 
+## Download 
+
+You can download the app from the GitHub release page [here](https://github.com/SalamPS/PiGANO/releases/download/v1.0.0/PiGANO-v1.0.0.apk).
+
 ## How to Use
 
 1. **Encrypting a Message**
@@ -49,10 +53,6 @@ PiGANO is an application for encrypting and decrypting secret messages using Cae
 - Dart
 - Flask
 - Python
-
-## Download 
-
-You can download the app from the GitHub release page [here](https://github.com/SalamPS/PiGANO/releases/download/v1.0.0/PiGANO-v1.0.0.apk).
 
 ## License
 
