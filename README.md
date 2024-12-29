@@ -62,33 +62,32 @@ PiGANO is licensed under MIT LICENSE. See the `LICENSE` file for more details.
   <h2>Our Team</h2>
   <a href="https://github.com/SalamPS">
     <picture>
-      <img alt="FLUTTER" src="https://avatars.githubusercontent.com/u/88570692?v=4" height="48" style="border-radius: 50%;">
+      <img alt="SalamPS" src="/assets/contributor/salam.png" height="48">
     </picture>
   </a>
   <a href="https://github.com/FarhanRK7">
     <picture>
-      <img alt="FLUTTER" src="https://avatars.githubusercontent.com/u/122107633?v=4" height="48" style="border-radius: 50%;">
+      <img alt="FarhanRK7" src="/assets/contributor/farhan.png" height="48">
     </picture>
   </a>
   <a href="https://github.com/Syifqila">
     <picture>
-      <img alt="FLUTTER" src="https://avatars.githubusercontent.com/u/121239986?v=4" height="48" style="border-radius: 50%;">
+      <img alt="Syifqila" src="/assets/contributor/syifa.png" height="48">
     </picture>
   </a>
   <a href="https://github.com/Kallendx82">
     <picture>
-      <img alt="FLUTTER" src="https://avatars.githubusercontent.com/u/116992598?v=4" height="48" style="border-radius: 50%;">
+      <img alt="Kallendx82" src="/assets/contributor/rajih.png" height="48">
     </picture>
   </a>
   <a href="https://github.com/AurielIsLearnHowToCode">
     <picture>
-      <img alt="FLUTTER" src="https://avatars.githubusercontent.com/u/92417829?v=4" height="48" style="border-radius: 50%;">
+      <img alt="AurielIsLearnHowToCode" src="/assets/contributor/auriel.png" height="48">
     </picture>
   </a>
   <a href="https://www.linkedin.com/in/rahmahf">
     <picture> 
-      <img alt="FLUTTER" src="https://media.licdn.com/dms/image/v2/D4E03AQH9heabSFEuIQ/profile-displayphoto-shrink_200_200/B4EZP8b5UkGcAY-/0/1735106992329?e=1741219200&v=beta&t=3ivllw02ngnE7v-I0KB9IUycD2XSEp5Lhtl-ohYqBM8
-" height="48" style="border-radius: 50%;"/> 
+      <img alt="rahmahf" src="/assets/contributor/rahmah.png" height="48"/> 
     </picture>
   </a>
 </div>
