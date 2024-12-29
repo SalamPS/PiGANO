@@ -50,7 +50,9 @@ PiGANO is an application for encrypting and decrypting secret messages using Cae
 - Flask
 - Python
 
-## Download You can download the app from the GitHub release page [here](https://github.com/SalamPS/PiGANO/releases/download/v1.0.0/PiGANO-v1.0.0.apk).
+## Download 
+
+You can download the app from the GitHub release page [here](https://github.com/SalamPS/PiGANO/releases/download/v1.0.0/PiGANO-v1.0.0.apk).
 
 ## License
 
