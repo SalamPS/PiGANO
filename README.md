@@ -60,32 +60,32 @@ PiGANO is licensed under MIT LICENSE. See the `LICENSE` file for more details.
 
 <div>
   <h2>Our Team</h2>
-  <a href="https://github.com/SalamPS">
+  <a href="https://github.com/SalamPS" target="_blank">
     <picture>
       <img alt="SalamPS" src="/assets/contributor/salam.png" height="48">
     </picture>
   </a>
-  <a href="https://github.com/FarhanRK7">
+  <a href="https://github.com/FarhanRK7" target="_blank">
     <picture>
       <img alt="FarhanRK7" src="/assets/contributor/farhan.png" height="48">
     </picture>
   </a>
-  <a href="https://github.com/Syifqila">
+  <a href="https://github.com/Syifqila" target="_blank">
     <picture>
       <img alt="Syifqila" src="/assets/contributor/syifa.png" height="48">
     </picture>
   </a>
-  <a href="https://github.com/Kallendx82">
+  <a href="https://github.com/Kallendx82" target="_blank">
     <picture>
       <img alt="Kallendx82" src="/assets/contributor/rajih.png" height="48">
     </picture>
   </a>
-  <a href="https://github.com/AurielIsLearnHowToCode">
+  <a href="https://github.com/AurielIsLearnHowToCode" target="_blank">
     <picture>
       <img alt="AurielIsLearnHowToCode" src="/assets/contributor/auriel.png" height="48">
     </picture>
   </a>
-  <a href="https://www.linkedin.com/in/rahmahf">
+  <a href="https://www.linkedin.com/in/rahmahf" target="_blank">
     <picture> 
       <img alt="rahmahf" src="/assets/contributor/rahmah.png" height="48"/> 
     </picture>
