@@ -30,8 +30,12 @@ class EganoResultState extends State<EganoResult> {
   bool _isLoading = true;
   bool _isSuccess = false;
 
-  File? _encodedImage;
+  String? _mse;
+  String? _psnr;
+  String? _cipherMessage;
   String? _decodedMessage;
+  
+  File? _encodedImage;
 
   @override
   void initState() {
@@ -89,7 +93,7 @@ class EganoResultState extends State<EganoResult> {
     try {
       final url = Uri.parse('https://py.salamp.id/encode');
       final request = http.MultipartRequest('POST', url)
-        ..files.add(await http.MultipartFile.fromPath('file', widget.image.path))
+        ..files.add(await http.MultipartFile.fromPath('image', widget.image.path))
         ..fields['message'] = widget.privateMessage
         ..fields['key'] = widget.privateKey.toString();
 
@@ -97,14 +101,41 @@ class EganoResultState extends State<EganoResult> {
       
       if (response.statusCode == 200 && mounted) {
         final responseData = await http.Response.fromStream(response);
-        final file = await _generateFile();
-        await file.writeAsBytes(responseData.bodyBytes);
+        final Map<String, dynamic> responseJson = json.decode(responseData.body);
 
-        setState(() {
-          _encodedImage = file;
-        });
-        _isSuccess = true;
-        return "Your message has been encrypted successfully and saved to your gallery.";
+        final mseRes = responseJson['mse'];
+        final psnrRes = responseJson['psnr'];
+        final filename = responseJson['filename'];
+        final cipherMessage = responseJson['ciphertext'];
+
+        final downloadUrl = Uri.parse('https://py.salamp.id/download');
+        final downloadRequest = await http.post(
+          downloadUrl,
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({'filename': filename}),
+        );
+
+        if (downloadRequest.statusCode == 200) {
+          final file = await _generateFile();
+          await file.writeAsBytes(downloadRequest.bodyBytes);
+
+          print('MSE: $mseRes');
+          print('PSNR: $psnrRes');
+          print('Filename: $filename');
+          print('Cipher: $cipherMessage');
+
+          setState(() {
+            _mse = mseRes!.toStringAsFixed(6);
+            _psnr = psnrRes!.toStringAsFixed(6);
+            _encodedImage = file;
+            _cipherMessage = cipherMessage;
+            _isSuccess = true;
+          });
+          return "Your message has been encrypted successfully and saved to your gallery.";
+        } else {
+            final errorMessage = jsonDecode(downloadRequest.body)['error'] ?? 'Unknown error';
+            return "Failed to download your new image: $errorMessage";
+        }
       } else {
         return "Failed because we could not connect to our encryptor server !";
       }
@@ -140,6 +171,27 @@ class EganoResultState extends State<EganoResult> {
       }
     } catch (e) {
        return "Failed to decrypt image. Try again !";
+    }
+  }
+
+  Widget encryptionResult(String title, String subtitle) {
+    if (!_isLoading && _isSuccess) {
+      return Text.rich(
+        TextSpan(
+          style: const TextStyle(color: Colors.white70, fontSize: 16),
+          children: [
+            TextSpan(
+              text: title,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            TextSpan(
+                text: subtitle.length > 30 ? '${subtitle.substring(0, 30)}...' : subtitle,
+            ),
+          ],
+        ),
+      );
+    } else {
+      return const SizedBox();
     }
   }
 
@@ -186,6 +238,7 @@ class EganoResultState extends State<EganoResult> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 30.0),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
                               width: _isLoading ? 50 : double.infinity,
@@ -213,30 +266,14 @@ class EganoResultState extends State<EganoResult> {
                               ),
                             ),
                             const SizedBox(height: 15),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const SizedBox(width: 5),
-                                Expanded(child: 
-                                  _isLoading || !_isSuccess
-                                  ? const Text('', style: TextStyle(color: Colors.white70))
-                                  : Text.rich(
-                                    TextSpan(
-                                      style: const TextStyle(color: Colors.white70, fontSize: 16),
-                                      children: [
-                                        TextSpan(
-                                          text: widget.method == 'Encrypt' ? 'ENCRYPTED: ' : 'DECRYPTED: ',
-                                          style: const TextStyle(fontWeight: FontWeight.bold),
-                                        ),
-                                        TextSpan(
-                                          text: _decodedMessage ?? widget.privateMessage,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
+                            if (widget.method == "Encrypt" && !_isLoading && _isSuccess) ...[
+                              encryptionResult("TXT\t\t\t\t: ", widget.privateMessage),
+                              encryptionResult('CPT\t\t\t\t: ', _cipherMessage ?? 'N/A'),
+                              encryptionResult('MSE\t\t\t: ', _mse ?? 'N/A'),
+                              encryptionResult('PSNR\t: ', _psnr ?? 'N/A'),
+                            ] else if (widget.method == "Decrypt" && !_isLoading && _isSuccess) ...[
+                              encryptionResult("DECRYPTED", _decodedMessage != null ? _decodedMessage! : 'N/A'),
+                            ],
                           ],
                         ),
                       ),
