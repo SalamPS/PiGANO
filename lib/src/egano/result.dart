@@ -118,12 +118,6 @@ class EganoResultState extends State<EganoResult> {
         if (downloadRequest.statusCode == 200) {
           final file = await _generateFile();
           await file.writeAsBytes(downloadRequest.bodyBytes);
-
-          print('MSE: $mseRes');
-          print('PSNR: $psnrRes');
-          print('Filename: $filename');
-          print('Cipher: $cipherMessage');
-
           setState(() {
             _mse = mseRes!.toStringAsFixed(6);
             _psnr = psnrRes!.toStringAsFixed(6);
@@ -174,8 +168,12 @@ class EganoResultState extends State<EganoResult> {
     }
   }
 
-  Widget encryptionResult(String title, String subtitle) {
+  Widget encryptionResult(String title, String subtitle, int limit) {
     if (!_isLoading && _isSuccess) {
+      String sub = limit > 0 
+        ? subtitle.length > limit ? '${subtitle.substring(0, limit)}...' : subtitle
+        : subtitle;
+
       return Text.rich(
         TextSpan(
           style: const TextStyle(color: Colors.white70, fontSize: 16),
@@ -185,7 +183,7 @@ class EganoResultState extends State<EganoResult> {
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             TextSpan(
-                text: subtitle.length > 30 ? '${subtitle.substring(0, 30)}...' : subtitle,
+                text: sub,
             ),
           ],
         ),
@@ -267,12 +265,12 @@ class EganoResultState extends State<EganoResult> {
                             ),
                             const SizedBox(height: 15),
                             if (widget.method == "Encrypt" && !_isLoading && _isSuccess) ...[
-                              encryptionResult("TXT\t\t\t\t: ", widget.privateMessage),
-                              encryptionResult('CPT\t\t\t\t: ', _cipherMessage ?? 'N/A'),
-                              encryptionResult('MSE\t\t\t: ', _mse ?? 'N/A'),
-                              encryptionResult('PSNR\t: ', _psnr ?? 'N/A'),
+                              encryptionResult("TXT\t\t\t\t: ", widget.privateMessage, 30),
+                              encryptionResult('CPT\t\t\t\t: ', _cipherMessage ?? 'N/A', 30),
+                              encryptionResult('MSE\t\t\t: ', _mse ?? 'N/A', 30),
+                              encryptionResult('PSNR\t: ', _psnr ?? 'N/A', 30),
                             ] else if (widget.method == "Decrypt" && !_isLoading && _isSuccess) ...[
-                              encryptionResult("DECRYPTED", _decodedMessage != null ? _decodedMessage! : 'N/A'),
+                              encryptionResult("DECRYPTED: ", _decodedMessage != null ? _decodedMessage! : 'N/A', 0),
                             ],
                           ],
                         ),
