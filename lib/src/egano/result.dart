@@ -131,10 +131,11 @@ class EganoResultState extends State<EganoResult> {
             return "Failed to download your new image: $errorMessage";
         }
       } else {
-        return "Failed because we could not connect to our encryptor server !";
+        final errorMessage = response.reasonPhrase ?? 'Unknown error';
+        return "Failed to connect: $errorMessage";
       }
     } catch (e) {
-      return "Failed to connect to the server. Please check your connection !";
+      return "Failed: $e";
     }
   }
 
@@ -161,10 +162,13 @@ class EganoResultState extends State<EganoResult> {
            return "Failed to decrypt image. Please provide a picture that match your private key !";
         }
       } else {
-         return "Failed because we could not connect to our decryptor server !";
+        final errorMessage = response.reasonPhrase ?? 'Unknown error';
+        print(errorMessage);
+        return "Failed to connect: $errorMessage";
       }
     } catch (e) {
-       return "Failed to decrypt image. Try again !";
+      print(e);
+      return "Failed: $e";
     }
   }
 
