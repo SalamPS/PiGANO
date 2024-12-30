@@ -14,6 +14,7 @@ dependencies:
   google_fonts: ^6.2.1
   cupertino_icons: ^1.0.8
   permission_handler: ^10.0.0
+  shared_preferences: ^2.0.6
   intl: ^0.17.0
   http: ^1.2.2
 

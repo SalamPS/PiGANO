@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:egano/src/utils/notification_utils.dart';
+import 'package:egano/src/utils/preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
@@ -37,8 +38,6 @@ class EganoResultState extends State<EganoResult> {
   
   File? _encodedImage;
 
-  String piGANO = 'https://c658-125-163-55-65.ngrok-free.app';
-
   @override
   void initState() {
     super.initState();
@@ -47,7 +46,7 @@ class EganoResultState extends State<EganoResult> {
       particles.add(Particle(width: 600, height: 701));
     }
     update();
-    _startFetching();
+    _setupFetches();
   }
 
   update() {
@@ -60,6 +59,11 @@ class EganoResultState extends State<EganoResult> {
     });
   }
 
+  Future <void> _setupFetches () async {
+    String configUrl = await getData("apiUrl");
+    _startFetching(configUrl);
+  }
+
   Future<File> _generateFile () async {
     if (!await directory.exists()) {
       await directory.create(recursive: true);
@@ -70,12 +74,12 @@ class EganoResultState extends State<EganoResult> {
     return File(path);
   }
 
-  void _startFetching() async {
+  void _startFetching(String baseUrl) async {
     String result = '';
     if (widget.method == 'Encrypt') {
-      result = await _encodeImage();
+      result = await _encodeImage(baseUrl);
     } else if (widget.method == "Decrypt") {
-      result = await _decodeImage();
+      result = await _decodeImage(baseUrl);
     }
     
     if (mounted && result.isNotEmpty) {
@@ -91,9 +95,9 @@ class EganoResultState extends State<EganoResult> {
     });
   }
 
-  Future<dynamic> _encodeImage() async {
+  Future<dynamic> _encodeImage(String baseUrl) async {
     try {
-      final url = Uri.parse('$piGANO/encode');
+      final url = Uri.parse('$baseUrl/encode');
       final request = http.MultipartRequest('POST', url)
         ..files.add(await http.MultipartFile.fromPath('image', widget.image.path))
         ..fields['message'] = widget.privateMessage
@@ -110,7 +114,7 @@ class EganoResultState extends State<EganoResult> {
         final filename = responseJson['filename'];
         final cipherMessage = responseJson['ciphertext'];
 
-        final downloadUrl = Uri.parse('$piGANO/download');
+        final downloadUrl = Uri.parse('$baseUrl/download');
         final downloadRequest = await http.post(
           downloadUrl,
           headers: {'Content-Type': 'application/json'},
@@ -141,9 +145,9 @@ class EganoResultState extends State<EganoResult> {
     }
   }
 
-  Future<dynamic> _decodeImage () async {
+  Future<dynamic> _decodeImage (String baseUrl) async {
     try {
-      final url = Uri.parse('$piGANO/decode');
+      final url = Uri.parse('$baseUrl/decode');
       final request = http.MultipartRequest('POST', url)
         ..files.add(await http.MultipartFile.fromPath('file', widget.image.path))
         ..fields['key'] = widget.privateKey.toString();

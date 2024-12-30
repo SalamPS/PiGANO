@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:egano/src/utils/notification_utils.dart';
+import 'package:egano/src/utils/preferences.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:egano/src/background/particle.dart';
 import 'package:egano/src/background/particles_animation.dart';
@@ -19,7 +20,6 @@ class EganoInput extends StatefulWidget {
 }
 
 class EganoInputState extends State<EganoInput> {
-  final int maxFileSize = 10;
   late List<Particle> particles;
   TextEditingController privateKeyCtr = TextEditingController();
   TextEditingController privateMessageCtr = TextEditingController();
@@ -71,6 +71,20 @@ class EganoInputState extends State<EganoInput> {
   }
 
   Future pickImage(source) async {
+    double maxFileSize;
+    String sizeLimit = await getData("sizeLimit");
+    String configUrl = await getData("apiUrl");
+
+    if (configUrl.isEmpty) {
+      await saveData("apiUrl", "https://py.salamp.id");
+      await saveData("sizeLimit", "1");
+      configUrl = "https://py.salamp.id";
+      maxFileSize = 1;
+    }
+    else {
+      maxFileSize = double.parse(sizeLimit);
+    }
+    
     final image = await ImagePicker().pickImage(source: source == "gallery" ? ImageSource.gallery : ImageSource.camera);
     if (image != null) {
       if (await image.length() > maxFileSize * 1024 * 1024) {
