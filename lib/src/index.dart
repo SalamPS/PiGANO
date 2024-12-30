@@ -192,7 +192,7 @@ class _EganoWelcomeState extends State<EganoWelcome> {
                         children: [
                           Icon(Icons.key_rounded, color: Colors.white),
                           SizedBox(width: 10),
-                          Text('Coba sekarang !', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                          Text('Try now !', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),
