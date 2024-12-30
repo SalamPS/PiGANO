@@ -26,7 +26,7 @@ PiGANO is an application for encrypting and decrypting secret messages using Cae
 
 ## Download 
 
-You can download the app from the GitHub release page [here](https://github.com/SalamPS/PiGANO/releases/download/v1.0.0/PiGANO-v1.0.0.apk).
+You can download the app from the GitHub release page [here](https://github.com/SalamPS/PiGANO/releases/).
 
 ## How to Use
 
