@@ -31,7 +31,6 @@ You can download the app from the GitHub release page [here](https://github.com/
 ## How to Use
 
 1. **Encrypting a Message**
-    - Open the PiGANO application.
     - Select the 'Encrypt' option.
     - Upload the photo you want to use or capture it using camera.
     - Enter the private key.
@@ -40,12 +39,17 @@ You can download the app from the GitHub release page [here](https://github.com/
     - Save the encrypted image.
 
 2. **Decrypting a Message**
-    - Open the PiGANO application.
     - Select the 'Decrypt' option.
     - Upload the encrypted photo.
     - Enter the private key used for encryption.
     - Click 'Decrypt' to start the decryption process.
     - Read the decrypted secret message.
+
+1. **Additional Setup**
+    - Access config using button at bottom right of your screen
+    - Set your API URL and file size limit in MB
+    - Save your config.
+    - (Our server only provide 1 MB of file upload, be wise)
 
 ## Tech Stack Used
 
