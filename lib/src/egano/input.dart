@@ -19,6 +19,7 @@ class EganoInput extends StatefulWidget {
 }
 
 class EganoInputState extends State<EganoInput> {
+  final int maxFileSize = 10;
   late List<Particle> particles;
   TextEditingController privateKeyCtr = TextEditingController();
   TextEditingController privateMessageCtr = TextEditingController();
@@ -71,9 +72,16 @@ class EganoInputState extends State<EganoInput> {
 
   Future pickImage(source) async {
     final image = await ImagePicker().pickImage(source: source == "gallery" ? ImageSource.gallery : ImageSource.camera);
-    if (image == null) return;
-    final imageTemp = File(image.path);
-    setState(() => this.image = imageTemp);
+    if (image != null) {
+      if (await image.length() > maxFileSize * 1024 * 1024) {
+        NotificationUtils.showErrorNotification(context, 'Please provide an image with a size of less than ${maxFileSize}MB !');
+      }
+      else {
+        setState(() {
+          this.image = File(image.path);
+        });
+      }
+    }
   }
 
   void eganoCrypt (method) {

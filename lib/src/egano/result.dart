@@ -37,6 +37,8 @@ class EganoResultState extends State<EganoResult> {
   
   File? _encodedImage;
 
+  String piGANO = 'https://c658-125-163-55-65.ngrok-free.app';
+
   @override
   void initState() {
     super.initState();
@@ -91,7 +93,7 @@ class EganoResultState extends State<EganoResult> {
 
   Future<dynamic> _encodeImage() async {
     try {
-      final url = Uri.parse('https://py.salamp.id/encode');
+      final url = Uri.parse('$piGANO/encode');
       final request = http.MultipartRequest('POST', url)
         ..files.add(await http.MultipartFile.fromPath('image', widget.image.path))
         ..fields['message'] = widget.privateMessage
@@ -108,7 +110,7 @@ class EganoResultState extends State<EganoResult> {
         final filename = responseJson['filename'];
         final cipherMessage = responseJson['ciphertext'];
 
-        final downloadUrl = Uri.parse('https://py.salamp.id/download');
+        final downloadUrl = Uri.parse('$piGANO/download');
         final downloadRequest = await http.post(
           downloadUrl,
           headers: {'Content-Type': 'application/json'},
@@ -141,7 +143,7 @@ class EganoResultState extends State<EganoResult> {
 
   Future<dynamic> _decodeImage () async {
     try {
-      final url = Uri.parse('https://py.salamp.id/decode');
+      final url = Uri.parse('$piGANO/decode');
       final request = http.MultipartRequest('POST', url)
         ..files.add(await http.MultipartFile.fromPath('file', widget.image.path))
         ..fields['key'] = widget.privateKey.toString();
@@ -269,10 +271,10 @@ class EganoResultState extends State<EganoResult> {
                             ),
                             const SizedBox(height: 15),
                             if (widget.method == "Encrypt" && !_isLoading && _isSuccess) ...[
-                              encryptionResult("TXT\t\t\t\t: ", widget.privateMessage, 30),
-                              encryptionResult('CPT\t\t\t\t: ', _cipherMessage ?? 'N/A', 30),
                               encryptionResult('MSE\t\t\t: ', _mse ?? 'N/A', 30),
                               encryptionResult('PSNR\t: ', _psnr ?? 'N/A', 30),
+                              encryptionResult('CPT\t\t\t\t: ', _cipherMessage ?? 'N/A', 30),
+                              encryptionResult("TXT\t\t\t\t: ", widget.privateMessage, 0),
                             ] else if (widget.method == "Decrypt" && !_isLoading && _isSuccess) ...[
                               encryptionResult("DECRYPTED: ", _decodedMessage != null ? _decodedMessage! : 'N/A', 0),
                             ],
