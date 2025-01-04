@@ -60,7 +60,7 @@ You can download the app from the GitHub release page [here](https://github.com/
 
 ## License
 
-PiGANO is licensed under MIT LICENSE. See the `LICENSE` file for more details.
+PiGANO is licensed under CC LICENSE. See the `LICENSE` file for more details.
 
 <div>
   <h2>Our Team</h2>
